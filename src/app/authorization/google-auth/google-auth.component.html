@@ -1,0 +1,21 @@
+<div>
+    <table>
+      <tr>
+        <th>Employee Name</th>
+        <th>Actions</th>
+      </tr>
+      <!-- <tr *ngFor="let employee of employees"> -->
+        <td>{{ employees[0].name }}</td>
+        <td>
+          <button (click)="loginEmployee()">Login & Authorize</button>
+          <button (click)="syncAllEmployeesDocuments()">Sync Documents</button>
+        </td>
+      <!-- </tr> -->
+    </table>
+</div>
+
+<div>
+    <button class="btn btn-danger btn-sm" (click)="revokeAccess()">
+        Revoke Access
+    </button>
+</div>
