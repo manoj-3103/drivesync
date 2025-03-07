@@ -12,15 +12,13 @@
   <h1 class="mx-auto p-12">Time Crashers</h1>
 </div>
 
-<div>
-  <app-google-auth></app-google-auth>
-</div>
-
 <div class="container py-5 text-center">
   <h1 class="display-4 text-accent-violet fw-bold">Sync Your Files to Drive</h1>
   <p class="lead text-secondary">Effortlessly synchronize your important files to your Google Drive with our secure and seamless service.</p>
-  <div class="mt-20">
-    <button class="btn btn-link btn-lg">Sign in with google</button>
+  <div class="mt-20 d-flex">
+    <div class="mx-auto">
+      <app-google-auth></app-google-auth>
+    </div>
   </div>
   <div class="mx-auto mt-40">
     <h2 class="text-center mb-12">Key Features</h2>
@@ -29,7 +27,7 @@
     <div class="col-md-4">
       <div class="card shadow-lg border-0">
         <div class="card-body">
-          <span class="ki ki-file ki-blue"></span>
+          <span class="ki ki-file ki-blue ki-lg"></span>
           <h3 className="text-xl font-medium mb-2">Automatic Syncing</h3>
           <p className="text-muted-foreground">
             Your documents are automatically synced to Google Drive as soon as they're generated, ensuring you never lose important files.
@@ -40,7 +38,7 @@
     <div class="col-md-4">
       <div class="card shadow-lg border-0">
         <div class="card-body">
-          <span class="ki ki-upload ki-blue"></span>
+          <span class="ki ki-upload ki-blue ki-lg"></span>
           <h3 className="text-xl font-medium mb-2">Effortless Integration</h3>
           <p className="text-muted-foreground">
             Simple one-click authentication with Google Drive. No complicated setup or technical knowledge required.
@@ -51,7 +49,7 @@
     <div class="col-md-4">
       <div class="card shadow-lg border-0">
         <div class="card-body">
-          <span class="ki ki-lock ki-blue"></span>
+          <span class="ki ki-lock ki-blue ki-lg"></span>
           <h3 className="text-xl font-medium mb-2">Secure Access</h3>
           <p className="text-muted-foreground">
             Your documents are securely stored in your personal Google Drive account, giving you complete control over your data.

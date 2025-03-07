@@ -1,21 +1,8 @@
-<div>
-    <table>
-      <tr>
-        <th>Employee Name</th>
-        <th>Actions</th>
-      </tr>
-      <!-- <tr *ngFor="let employee of employees"> -->
-        <td>{{ employees[0].name }}</td>
-        <td>
-          <button (click)="loginEmployee()">Login & Authorize</button>
-          <button (click)="syncAllEmployeesDocuments()">Sync Documents</button>
-        </td>
-      <!-- </tr> -->
-    </table>
+<div class="d-flex gap-2">
+    <button class="btn btn-link btn-lg" *ngIf="!isSignedIn" (click)="loginEmployee()">Sign in with google</button>
+    <button class="btn btn-link btn-lg" *ngIf="isSignedIn" (click)="syncAllEmployeesDocuments()">upload File</button>
 </div>
 
-<div>
-    <button class="btn btn-danger btn-sm" (click)="revokeAccess()">
-        Revoke Access
-    </button>
+<div class="d-flex mt-20" *ngIf="isSignedIn">
+    <button class="btn btn-danger mx-auto" (click)="revokeAccess()">Revoke Access</button>
 </div>

@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule, NgIf } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { DriveService } from '../services/drive-service.service';
 import { EmployeeService } from '../services/employee-service.service';
 import { AuthService } from '../services/auth-service.service';
-import { CommonModule, NgFor } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-google-auth',
   standalone: true,
-  imports: [CommonModule, NgFor],
+  imports: [CommonModule, NgIf],
   templateUrl: './google-auth.component.html',
 })
-export class GoogleAuthComponent implements OnInit {
+export class GoogleAuthComponent implements OnInit, OnDestroy {
 
   employees: any = [
     { id: 'emp1', name: 'John Doe' },
@@ -23,6 +25,8 @@ export class GoogleAuthComponent implements OnInit {
 
   accessToken: any;
   refreshToken: any;
+  isSignedIn: boolean = false;
+  isRefreshTokenAvailable: boolean = false; // need to integrate from backend
 
   private driveUploadUrl = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
 
@@ -30,10 +34,19 @@ export class GoogleAuthComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.accessToken = this.authService.getAccessTokenFromUrl();
-    console.log('this.accessToken: ', this.accessToken);
-    this.refreshToken = this.authService.getRefreshTokenFromUrl();
-    console.log('this.refreshToken: ', this.refreshToken);
+    const services: Observable<any> = this.isRefreshTokenAvailable ? this.authService.refreshToken(this.refreshToken) : this.authService.getAccessTokenFromUrl();
+    services.subscribe({
+      next: () => {
+        this.accessToken = localStorage.getItem('access_token');
+        this.refreshToken = localStorage.getItem('refresh_token');
+        console.log('this.accessToken: ', this.accessToken);
+        console.log('this.refreshToken: ', this.refreshToken);
+        this.isSignedIn = !!this.accessToken;
+      },
+      error: (err) => {
+        console.error('Error occurred:', err);
+      }
+    })
   }
 
   syncAllEmployeesDocuments() {
@@ -59,7 +72,18 @@ export class GoogleAuthComponent implements OnInit {
   }
 
   revokeAccess() {
-    this.authService.revokeAccessToken(this.accessToken).subscribe(() => console.log("Access Revoked"));
+    this.authService.revokeAccessToken(localStorage.getItem('access_token')).subscribe(() => console.log("Access Revoked"));
+    this.destroyLocalStorage();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyLocalStorage();
+  }
+
+  destroyLocalStorage() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    this.isSignedIn = false;
   }
 
 }
