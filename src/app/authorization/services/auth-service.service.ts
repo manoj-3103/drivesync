@@ -10,8 +10,8 @@ import { Observable, of, switchMap, tap } from 'rxjs';
 export class AuthService {
 
   selectedEmployeeId: any;
-  private clientId = '1099306377307-mr40lb1vi6t70cbl9784s27k7havge62.apps.googleusercontent.com';
-  private clientSecretId = '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';
+  private clientId = 'your client id'; // use oAuth clientId
+  private clientSecretId = 'your client secret id'; //use oAuth clientSecretId
   private redirectUri = 'http://localhost:4200/auth';
   private scope = 'https://www.googleapis.com/auth/drive';
   private revokeUrl = 'https://accounts.google.com/o/oauth2/revoke';
