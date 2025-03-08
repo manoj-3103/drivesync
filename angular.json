@@ -51,23 +51,8 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
-                            "node_modules/ngx-toastr/toastr.css",
-                            "node_modules/dragula/dist/dragula.css",
-                            "node_modules/quill/dist/quill.core.css",
-                            "node_modules/quill/dist/quill.bubble.css",
-                            "node_modules/quill/dist/quill.snow.css",
-                            "node_modules/quill-mention/dist/quill.mention.css",
-                            "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
-                            "node_modules/@ng-select/ng-select/themes/default.theme.css",
-                            "projects/monolith/src/assets/styles/getorgchart.css",
-                            "./node_modules/grapesjs/dist/css/grapes.min.css",
-                            "node_modules/@keka/gantt-chart/dist/css/bundle.css"
-                        ],
-            "scripts": [
-                "projects/monolith/src/scripts/getOrgCharts/getorgchart.js",
-                "node_modules/jquery/dist/jquery.js"
-            ]
+            "styles": [],
+            "scripts": []
           },
           "configurations": {
             "production": {
