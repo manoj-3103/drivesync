@@ -9,7 +9,6 @@ export class EmployeeService {
 
   employees: any = [
     { id: 'emp1', name: 'John Doe' },
-    // { id: 'emp2', name: 'Jane Smith' }
   ];
 
   getEmployees() {

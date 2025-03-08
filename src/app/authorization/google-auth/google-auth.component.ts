@@ -1,9 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { DriveService } from '../services/drive-service.service';
-import { EmployeeService } from '../services/employee-service.service';
 import { AuthService } from '../services/auth-service.service';
 import { Observable } from 'rxjs';
 
@@ -15,23 +12,16 @@ import { Observable } from 'rxjs';
 })
 export class GoogleAuthComponent implements OnInit, OnDestroy {
 
-  employees: any = [
-    { id: 'emp1', name: 'John Doe' },
-  ];
-
-  employeeId = 'emp1';
-
-  file = new File(["Sample Document"], `doc-emp1.txt`, { type: "text/plain" })
-
+  selectedFile: File | null = null;
+  uploadResponse: any = null;
+  files: any[] = [];
   accessToken: any;
   refreshToken: any;
   isSignedIn: boolean = false;
   isRefreshTokenAvailable: boolean = false; // need to integrate from backend
 
-  private driveUploadUrl = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
 
-  constructor(private http: HttpClient, private driveService: DriveService, private employeeService: EmployeeService, private authService: AuthService) {
-  }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
     const services: Observable<any> = this.isRefreshTokenAvailable ? this.authService.refreshToken(this.refreshToken) : this.authService.getAccessTokenFromUrl();
@@ -42,6 +32,7 @@ export class GoogleAuthComponent implements OnInit, OnDestroy {
         console.log('this.accessToken: ', this.accessToken);
         console.log('this.refreshToken: ', this.refreshToken);
         this.isSignedIn = !!this.accessToken;
+        this.getGooleDriveFiles();
       },
       error: (err) => {
         console.error('Error occurred:', err);
@@ -49,22 +40,24 @@ export class GoogleAuthComponent implements OnInit, OnDestroy {
     })
   }
 
-  syncAllEmployeesDocuments() {
-    const metadata = {
-      name: this.file.name,
-      mimeType: this.file.type
-    };
+  getGooleDriveFiles() {
+    if (this.accessToken) {
+      this.authService.getDriveFiles(this.accessToken).subscribe((response: any) => {
+        this.files = response.files;
+        console.log(this.files);
+      });
+    }
+  }
 
-    const formData = new FormData();
-    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-    formData.append('file', this.file);
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.accessToken}`
-    });
-    this.http.post(this.driveUploadUrl, formData, { headers }).subscribe((response: any) => {
-      console.log(`File uploaded for John Doe:`, response);
-    });
+  deleteFile(fileId: string) {
+    if (this.accessToken) {
+      this.authService.deleteFile(this.accessToken, fileId).subscribe(() => {
+        console.log('File deleted:', fileId);
+        this.files = this.files.filter(file => file.id !== fileId);
+      }, (error: any) => {
+        console.error('Error deleting file:', error);
+      });
+    }
   }
 
   loginEmployee() {
@@ -74,6 +67,24 @@ export class GoogleAuthComponent implements OnInit, OnDestroy {
   revokeAccess() {
     this.authService.revokeAccessToken(localStorage.getItem('access_token')).subscribe(() => console.log("Access Revoked"));
     this.destroyLocalStorage();
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+    console.log('this.selectedFile: ', this.selectedFile);
+  }
+
+  uploadFile() {
+    if (this.selectedFile && this.accessToken) {
+      this.authService.uploadFile(this.accessToken, this.selectedFile).subscribe((response: any) => {
+        this.uploadResponse = response;
+        this.selectedFile = null;
+        this.getGooleDriveFiles();
+        console.log('File uploaded:', response);
+      }, (error: any) => {
+        console.error('Upload error:', error);
+      });
+    }
   }
 
   ngOnDestroy(): void {

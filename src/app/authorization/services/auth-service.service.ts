@@ -10,11 +10,14 @@ import { Observable, of, switchMap, tap } from 'rxjs';
 export class AuthService {
 
   selectedEmployeeId: any;
-  private clientId = 'your client id'; // use oAuth clientId
-  private clientSecretId = 'your client secret id'; //use oAuth clientSecretId
+  private clientId = 'clientId';
+  private clientSecretId = 'clientSecretId';
   private redirectUri = 'http://localhost:4200/auth';
   private scope = 'https://www.googleapis.com/auth/drive';
   private revokeUrl = 'https://accounts.google.com/o/oauth2/revoke';
+  private driveApiUrl = 'https://www.googleapis.com/drive/v3/files';
+  private driveUploadUrl = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
+
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -83,5 +86,35 @@ export class AuthService {
   revokeAccessToken(accessToken: any) {
     const params = new HttpParams().set('token', accessToken);
     return this.http.post(this.revokeUrl, null, { params });
+  }
+
+  getDriveFiles(accessToken: string) {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${accessToken}` });
+    return this.http.get(this.driveApiUrl, { headers });
+  }
+
+  uploadFile(accessToken: string, file: File) {
+    const metadata = {
+        name: file.name,
+        mimeType: file.type
+    };
+
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    formData.append('file', file);
+
+    const headers = new HttpHeaders({
+        Authorization: `Bearer ${accessToken}`
+    });
+
+    return this.http.post(this.driveUploadUrl, formData, { headers });
+}
+
+  deleteFile(accessToken: string, fileId: string) {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+
+    return this.http.delete(`${this.driveApiUrl}/${fileId}`, { headers });
   }
 }

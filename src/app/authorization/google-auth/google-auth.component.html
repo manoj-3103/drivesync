@@ -1,8 +1,60 @@
-<div class="d-flex gap-2">
-    <button class="btn btn-link btn-lg" *ngIf="!isSignedIn" (click)="loginEmployee()">Sign in with google</button>
-    <button class="btn btn-link btn-lg" *ngIf="isSignedIn" (click)="syncAllEmployeesDocuments()">upload File</button>
+<div class="d-flex align-items-center gap-2">
+    <div class="card w-400 border-radius-6 pt-10 pb-20">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <span class="ki ki-cloud-sync ki-lg ki-blue mr-4"></span>
+                <h5>Google Drive Connection</h5>
+            </div>
+            <p class="text-secondary">Connect your Google Drive Account to enable file synchronization</p>
+            <div class="alert alert-success my-10" *ngIf="isSignedIn">
+                <div class="d-flex">
+                    <span class="ki ki-check ki-green mr-2"></span>
+                    <div>
+                        <p class="text-success">Connected</p>
+                        <p class="text-small">Your Google Drive account is connected and ready for synchronization</p>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mt-20">
+                <button class="btn btn-link btn-sm" *ngIf="!isSignedIn" (click)="loginEmployee()">Sign in</button>
+                <button class="btn btn-danger btn-sm" *ngIf="isSignedIn" (click)="revokeAccess()">Sign out</button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div *ngIf="isSignedIn" class="text-center">
+             <div>
+                 <a class="bg-primary-color-light border-2px border-primary-color border-dashed card clear-margin" (click)="inputControl.click()">
+                     <div class="card-body clear-padding">
+                         <input type="file"
+                                name="fileupload"
+                                class="d-none"
+                                (change)="onFileSelected($event)"
+                                #inputControl />
+                         <div class="d-flex justify-content-center align-items-center text-center h-120">
+                             <div>
+                                 <span class="ki-upload ki ki-lg ki-blue"></span>
+                                 <p *ngIf="!selectedFile" class="text-link px-1">select Files to upload from your computer</p>
+                                 <p *ngIf="selectedFile" class="px-1">{{selectedFile.name}}</p>
+                             </div>
+                         </div>
+                     </div>
+                 </a>
+                 <button class="btn btn-sm btn-link mt-4" (click)="uploadFile()" [disabled]="!selectedFile">Upload</button>
+             </div>
+        </div>
+    </div>
 </div>
 
-<div class="d-flex mt-20" *ngIf="isSignedIn">
-    <button class="btn btn-danger mx-auto" (click)="revokeAccess()">Revoke Access</button>
+<div *ngIf="files.length > 0">
+    <h2 class="p-2">Google Drive Files</h2>
+    <ul class="list-group">
+        <li *ngFor="let file of files" class="list-group-item d-flex justify-content-between align-items-center">
+            {{ file.name }} ({{ file.mimeType }})
+            <button class="btn btn-sm btn-danger" (click)="deleteFile(file.id)">Delete</button>
+        </li>
+    </ul>
 </div>
+
+
